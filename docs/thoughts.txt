@@ -178,7 +178,8 @@ $mappings = array(
                         'email',
                         'register_time',
                         ...
-                )
+                ),
+                'id' => 'email'
        ),
        'add_group_member' => array(
                 'type' => 'mapping',

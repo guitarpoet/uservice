@@ -6,6 +6,7 @@
 	require_once(dirname(__FILE__).'/libs/Smarty.class.php');
 	require_once(dirname(__FILE__).'/libs/lessc.inc.php');
 	require_once(dirname(__FILE__).'/libs/common.php');
+	require_once(dirname(__FILE__).'/libs/database.php');
 
 	$firephp = FirePHP::getInstance(true);
 	$firephp->registerErrorHandler($throwErrorExceptions=true);
@@ -30,7 +31,14 @@
 
 		// The controller logic
 		$controller = get_param('operation', 'default');
-		smooth_require_once(dirname(__FILE__).'/controllers/'.$controller.'.php');
+		
+		$file = dirname(__FILE__).'/controllers/'.$controller.'.php';
+		if(file_exists($file))
+			require_once($file);
+		else 
+			throw new Exception(_(sprintf('Can\'t find controller "%s"!', $controller)));
+
+		debug(Mapper::get_instance()->load_entity('users', 1));
 
 		$controller = capitalize_words($controller).'Controller';
 		$controller = new $controller;

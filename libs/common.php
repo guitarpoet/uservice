@@ -32,7 +32,7 @@
 		if(file_exists($file)) {
 		    require_once($file);
 		} else {
-		    throw(new Exception(_('File "').$file._('" does not exist.')));
+		    throw new Exception(_(sprintf('File "%s" does not exist.', $file)));
 		} 
 	}
 
@@ -46,5 +46,9 @@
 	// Set this only because gettext is not available for me.
 	function _($text) {
 		return $text;
+	}
+
+	function debug($message) {
+		fb($message);
 	}
 ?>

@@ -6,7 +6,7 @@
 			if(file_exists(dirname(__FILE__).'/../templates/'.$view.'.tpl'))
 				$smarty->display($view.'.tpl');
 			else 
-				throw new Exception(_('View "').$view.'" not found!'); // Incase the view is not found, show the error page.
+				throw new Exception(_(sprintf('View "%s" not found!', $view))); // Incase the view is not found, show the error page.
 		}
 	}
 ?>

@@ -1,0 +1,194 @@
+====================
+Thoughts on uservice
+====================
+
+:Author: Jack<guitarpoet@gmail.com>
+:Version: 0.1
+
+Thought on mvc
+---------------
+
+What I need is a simple and small mvc framework for I to use php more flexable and easily.
+
+**Model**
+All based on database. It should has the ability to update the database, mostly the entity has the same name of the database column, don't support any relationships.
+
+Need an entity manager to manage all the enetities. The enetity is just something config, can use enetitymanager to do these things:
+ - Load an entity: 
+ - Delete an eneity:
+ - Update an enetity:
+ - Query for entities:
+
+The model layer is based on mysqli.
+
+**View**
+
+The view use smarty to render.
+
+**Controller**
+
+Use an php file as the gateway of all the control logic to apply security and other things.
+
+The gateway is index.php.
+
+It takes parameter to decide where to go.
+
+All the view should be rendered by a controller, but if the controller is omited, will use the default controller to handle this, and if any error happens, will take error controller to handle the error.
+
+Thoughts on uservice
+--------------------
+
+**Inform**
+
+Get an information center to do the inform task. Using a swift to deliver the mails. 
+
+Information center uses mail as its primary method to deliver the informations, but can add more functions using a plugin.
+
+Mailer can be configured in the console. It can use mail function or smtp server to deliver the mail.
+
+The mail template also using smarty to render the mail, can edit the mail template in the templates folder.
+
+**Register**
+
+Anyone can use his email to register into the system. The email are the identifier of the user, the username must be unique too.
+
+**User Information**
+
+User has following informations:
+ - Basic
+  - username
+  - password
+  - email
+  - avatar
+ - Meta
+  - register_time
+  - register_ip
+  - last_login_time
+  - last_login_ip
+  - login_count
+  - salt
+  - suspended
+
+**Group Information** 
+
+Also use group to manage the user relationships, such as administrators, managers, advanced users and so on.
+
+Group has following informations:
+ - Basic
+  - groupname
+  - description
+ - Meta
+  - creation_time
+  - last_modification_time
+  - creator
+
+Group and user has the relationships as below:
+
+ - User -Creator-> Group 1-*
+ - User -Member-> Group *-*
+ - User -Manager-> Group *-*
+
+**Query and Pager**
+
+All the query using one same method like this:
+
+load, query.
+
+For example:
+
+load_user($email/$username) return only one record.
+query($query)
+
+$query is an object, like this:
+
+class Query {
+        public $page; // The current page of the query, default to 0
+        public $item_count; // The item count to fetch, default to 15, if set to -1, don't use pagination at all
+        public $type; // The type to fetch, can't be null, if setted, will look up the type from the entity table, using this type to easy the select and update process, all the query must be in the entity table, to manage all the sqls together.
+        public $args; // The arguments for the query, is an array.
+}
+
+The result of query like this:
+
+class QueryResult {
+        public $total; // Total item count
+        public $result;
+}
+
+class Error {
+        public $code;
+        public $message;
+}
+
+**The Design of User and Group Management**
+
+Using a controller for user and group management both.
+
+UserController can used to manage User.
+
+It has 3 views:
+ - User Details
+ - User Information Edit
+ - User Avatar Edit
+
+uservice will provide these functions to handle this:
+ - Avatar: Using gavatar service to do this. Don't need bother
+ - change_password($username/$email, $new_password) // Change the user's password
+ - reset_password($username/$email) // Reset the user's password, create a new one and send the password to user's email
+ - register_user($email, $username, $password) // Register the user
+ - login_user($email/$username, $password) // Login the user, setup the session and handle the remember me thing
+ - logout_user($email/$username) // Logout the user
+ - load_user($email/$username) // Get the user information
+ - delete_user($email/$username) // Delete the user
+ - suspend_user($email/$username) // Suspend the user
+ - activate_user($email/$username) // Activate the user
+ - list_users($page, $count) // List all the users in the system in page
+
+For group management, using a controller name as GroupController
+
+It has 4 views:
+ - Group Details(Include User List)
+ - Group Information Edit
+ - Group Memeber Management
+
+uservice will provide these functions to handle this:
+ - create_group($name) // Create the group
+ - change_group($name, $description) // Change the description
+ - add_group($name, $groupname) // Add a new group into this group
+ - remove_group($name) // Can't remove the groups in the system group or the system group
+ - list_group_members($name, $page, $count) // Returns QueryResult
+ - list_group_managers($name, $page, $count) // Returns Query Result
+ - add_group_memeber($name, $username/$email) // Add an user into group as memeber, if success returns 0 else return an error object
+ - remove_group_member($name, $username/$email) // Remove a member from the group
+ - add_group_manager($name, $username/$email)
+ - remove_group_manager($name, $username/$email) // Can't remove the creator as the manager
+
+**Thoughts On Database Access**
+
+Using a simple method to access the database.
+
+Using only one entity table file to store all the query and other things, like this:
+
+$mappings = array(
+       'user' => array(
+                'type' => 'entity',
+                'fields' => array(
+                        'username',
+                        'password',
+                        'email',
+                        'register_time',
+                        ...
+                )
+       ),
+       'add_group_member' => array(
+                'type' => 'mapping',
+                'operation' => 'insert',
+                'query' => 'insert into group_members(group, user) values (?, ?)'
+       )
+);
+
+Using the mapping table like this, all the database access operations are located in only one file.
+
+If the type is entity, the MappingManager can handle it like an entity.
+
+If update the eneity, the setted fields will be updated.

@@ -1,0 +1,4 @@
+*.swp
+templates_c
+cache
+templates/*.html

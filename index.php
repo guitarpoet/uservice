@@ -38,7 +38,14 @@
 		else 
 			throw new Exception(_(sprintf('Can\'t find controller "%s"!', $controller)));
 
-		debug(Mapper::get_instance()->load_entity('users', 1));
+		$user = array(
+			'id' => 2,
+			'email' => 'a@b.com',
+			'username' => 'e',
+			'password' => 'lixin'
+		);
+		Mapper::get_instance()->save_entity('users', $user);
+		debug(Mapper::get_instance()->exec('list_all_users'));
 
 		$controller = capitalize_words($controller).'Controller';
 		$controller = new $controller;

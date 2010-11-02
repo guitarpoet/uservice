@@ -68,6 +68,36 @@
 			return null;
 		}
 
+		public function load_by_fields($entity, $obj, $op = 'and') {
+			if(isset($GLOBALS['mapping_table'][$entity])){
+				$mapping = $GLOBALS['mapping_table'][$entity];
+
+				$params = array(); 
+				$values = array();
+				foreach(array_keys($obj) as $param) {
+					$params []= $param.' = ?';
+					$values []= $obj[$param];
+				}
+				
+				$query = sprintf('select %s from %s where %s', implode(',', array_merge(array('id'), $mapping['fields'])), $entity, implode(' '.$op.' ', $params));
+				debug($query);
+				$db = get_db();
+				$stmt = $db->prepare($query);
+				$stmt->bind_args($values);
+				$stmt->execute();
+				$stmt->store_result();
+				while($row = $stmt->fetch_assoc()){
+					$result = $row;
+					break;
+				}
+				$stmt->close();
+				$db->close();
+				if(isset($result))
+					return $result;
+			}
+			return null;
+		}
+
 		public function delete_entity($entity, $id) {
 			if(isset($GLOBALS['mapping_table'][$entity])){
 				$mapping = $GLOBALS['mapping_table'][$entity];
@@ -84,6 +114,9 @@
 			return false;
 		}
 
+		/**
+		 * Save or update the entity, if successfully saved, return the insert id of the entity
+		 */
 		public function save_entity($entity, $obj) {
 			if(isset($GLOBALS['mapping_table'][$entity])){
 				$mapping = $GLOBALS['mapping_table'][$entity];
@@ -116,8 +149,10 @@
 				debug($query);
 				$stmt->bind_args($values);
 				$result = $stmt->execute();
+				$id = $stmt->insert_id;
 				$stmt->close();
 				$db->close();
+				return $id;
 			}
 			return false;
 		}

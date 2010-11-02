@@ -193,3 +193,16 @@ Using the mapping table like this, all the database access operations are locate
 If the type is entity, the MappingManager can handle it like an entity.
 
 If update the eneity, the setted fields will be updated.
+
+
+Thoughts about UI
+-----------------
+
+**User Management**
+
+User management use one controller - UsersController for control.
+
+User management has 3 views:
+ - User Search Result View (Default view, using a null search query to search all the users in the system)
+ - User Detail View
+ - User Edit Form

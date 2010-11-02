@@ -1,3 +1,3 @@
 {include file="header.tpl"}
-	<h1>This is your home</h1>
+	<a href="{get_link type='oper' target='users'}">User Management</a>
 {include file="footer.tpl"}

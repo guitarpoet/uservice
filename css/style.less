@@ -1,0 +1,86 @@
+@import 'reset.css';
+@import 'jquery.ui.css';
+
+.header {
+	.ui-widget-header;
+       	.ui-corner-all;
+	.ui-widget;
+	padding: 5px 5px;
+}
+
+.container {
+	overflow:auto;
+}
+
+.toolbar {
+	.header;
+	.container;
+}
+
+.right {
+	float:right;
+}
+
+input.text_input {
+       	.ui-corner-all;
+	padding: 5px 5px;
+	.ui-widget;
+	border: 1px solid #C5DBEC;
+}
+
+table.datagrid {
+	background: #A6C9E2;
+	border-collapse: separate;
+	border-spacing: 1px;
+	.ui-corner-all;
+	thead {
+		.ui-corner-all;
+		th {
+			.ui-widget-header;
+			.ui-widget;
+			border:none;
+			padding: 2px 2px;
+			text-align:center;
+		}
+	}
+	tbody {
+		.active td {
+			background: #D0E5F5;
+		}
+		.checked td {
+			background: #FBEC88;
+		}
+		tr{
+			cursor: pointer;
+			td {
+				background: white;
+				.ui-widget;
+				padding: 2px 2px;
+				text-align:center;
+			}
+		}
+	}
+	tfoot {
+		.ui-corner-all;
+		tr{
+			background: white;
+		}
+	}
+}
+
+body {
+	font-size: 10px;
+	#users_result {
+		width: 700px;
+		margin:auto;
+		#users_control {
+			.combobox {
+				margin-left: 34px;
+			}
+		}
+		.datagrid {
+			margin-top: 10px;
+			width: 100%;
+		}
+	}
+}

@@ -1,5 +1,6 @@
 <?php
 	defined( 'uservice' ) or die( 'You should not see this.' );
+	require_once(dirname(__FILE__).'/event.php');
 
 	function get_param($name, $default) {
 		if(isset($_GET[$name])){
@@ -39,8 +40,14 @@
 	function get_link($target, $type = 'view' ) {
 		switch($type) {
 		case 'view':
-			return ROOT.'/index.php?view=$view';
+			return ROOT.'/index.php?view='.$target['target'];
+		case 'oper':
+			return ROOT.'/index.php?operation='.$target['target'];
 		}
+	}
+
+	function get_link_smarty($data) {
+		return get_link($data, $data['type']);
 	}
 
 	// Set this only because gettext is not available for me.

@@ -6,7 +6,7 @@
 	require_once(dirname(__FILE__).'/libs/Smarty.class.php');
 	require_once(dirname(__FILE__).'/libs/lessc.inc.php');
 	require_once(dirname(__FILE__).'/libs/common.php');
-	require_once(dirname(__FILE__).'/libs/database.php');
+	require_once(dirname(__FILE__).'/libs/user_ops.php');
 
 	$firephp = FirePHP::getInstance(true);
 	$firephp->registerErrorHandler($throwErrorExceptions=true);
@@ -15,6 +15,10 @@
 
 	date_default_timezone_set('Asia/Chongqing');
 
+	function show_text($data) {
+		return _($data['text']);
+	}
+
 	$smarty = new Smarty;
 	$smarty->force_compile = true;
 	if(isset($_GET['debug']) || isset($_POST['debug']))
@@ -22,8 +26,12 @@
 	$smarty->caching = true;
 	$smarty->cache_lifetime = 120;
 	$smarty->assign('title', 'UService');
+	$smarty->register->templateFunction('get_link', 'get_link_smarty');
+	$smarty->register->templateFunction('show', 'show_text');
 
 	$GLOBALS['engine'] = $smarty;
+
+	EventDispatcher::get_instance()->register_handler('*', 'debug');
 
 	try {
 		// Compile the less code to css
@@ -36,17 +44,7 @@
 		if(file_exists($file))
 			require_once($file);
 		else 
-			throw new Exception(_(sprintf('Can\'t find controller "%s"!', $controller)));
-
-		$user = array(
-			'id' => 2,
-			'email' => 'a@b.com',
-			'username' => 'e',
-			'password' => 'lixin'
-		);
-		Mapper::get_instance()->save_entity('users', $user);
-		debug(Mapper::get_instance()->exec('list_all_users'));
-
+			throw new Exception(sprintf(_('Can\'t find controller for operation "%s"!'), $controller));
 		$controller = capitalize_words($controller).'Controller';
 		$controller = new $controller;
 		$controller->handle($smarty);

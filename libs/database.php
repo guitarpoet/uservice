@@ -24,10 +24,14 @@
 				'status'
 			)
 		),
+		/**
+		 * List every user in the database
+		 */
 		'list_all_users' => array(
 			'type' => 'query',
 			'query' => 'select * from users',
-			'count_query' => 'select count(*) as count from users'
+			'count_query' => 'select count(*) as count from users',
+			'oper' => 'select'
 		)
 	);
 

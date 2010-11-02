@@ -3,5 +3,18 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>{$title}</title>
+	<link rel="stylesheet" href="{$smarty.const.ROOT}/cache/style.css" />
+	<script type="text/javascript" src="{$smarty.const.ROOT}/js/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="{$smarty.const.ROOT}/js/jquery-ui-1.8.custom.min.js"></script>
+	<script type="text/javascript">
+		initialize = function($){}
+		// Initialize for every page
+		jQuery(function($){
+			initialize($);
+		});
+	</script>
 </head>
 <body>
+	<div id="wrapper">
+{include file="left.tpl"}
+		<div id="main">

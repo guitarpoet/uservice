@@ -32,7 +32,20 @@
 			'query' => 'select * from users',
 			'count_query' => 'select count(*) as count from users',
 			'oper' => 'select'
+		),
+		'list_user_by_name' => array(
+			'type' => 'query',
+			'query' => 'select * from users where username like ?',
+			'count_query' => 'select count(*) from users where username like ?',
+			'oper' => 'select'
+		),
+		'list_user_by_email' => array(
+			'type' => 'query',
+			'query' => 'select * from users where email like ?',
+			'count_query' => 'select count(*) from users where email like ?',
+			'oper' => 'select'
 		)
+
 	);
 
 

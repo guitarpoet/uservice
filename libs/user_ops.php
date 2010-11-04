@@ -67,6 +67,17 @@
 		), 'or');
 	}
 
+	function update_user($id, $username, $email, $status) {
+		$mapper = Mapper::get_instance();
+		user_op_event('user_update', sprintf('Update user with username %s and email %s', $username, $email));
+		$mapper->save_entity('users', array(
+			'id' => $id,
+			'username' => $username,
+			'email' => $email,
+			'status' => $status
+		));
+	}
+
 	function login_user($name_or_email, $password) {
 		$mapper = Mapper::get_instance();
 		$user = $mapper->load_by_fields('users', array(
@@ -112,6 +123,36 @@
 			$mapper = Mapper::get_instance();
 			user_op_event('user_delete', sprintf('Delete user with username %s or email %s', $name_or_email));
 			$mapper->delete_entity('users', $user['id']);
+		}
+	}
+
+	function delete_users($ids) {
+		$mapper = Mapper::get_instance();
+		user_op_event('user_delete', sprintf('Suspend users %s', implode(',', $ids)));
+		foreach($ids as $id) {
+			$mapper->delete_entity('users', $id);
+		}
+	}
+
+	function suspend_users($ids) {
+		$mapper = Mapper::get_instance();
+		user_op_event('user_suspend', sprintf('Suspend users %s', implode(',', $ids)));
+		foreach($ids as $id) {
+			$mapper->save_entity('users', array(
+				'id' => $id,
+				'status' => USER_SUSPEND
+			));
+		}
+	}
+
+	function activate_users($ids) {
+		$mapper = Mapper::get_instance();
+		user_op_event('user_activate', sprintf('Suspend users %s', implode(',', $ids)));
+		foreach($ids as $id) {
+			$mapper->save_entity('users', array(
+				'id' => $id,
+				'status' => USER_LOGOUT
+			));
 		}
 	}
 

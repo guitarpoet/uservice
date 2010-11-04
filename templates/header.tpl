@@ -11,10 +11,27 @@
 		// Initialize for every page
 		jQuery(function($){
 			initialize($);
+			$('#message').dialog({
+				autoOpen: false,
+				show: "blind",
+				hide: "explode",
+				modal: true
+			});
+			$('.button').button();
 		});
+
+		function showMessage(message, title, refreshAtClose) {
+			jQuery('#message h2').text(message);
+			jQuery('#message').dialog('option', 'title', title);
+			if(refreshAtClose) {
+				jQuery('#message').bind('dialogclose', function(){ window.location = window.location});
+			}
+			jQuery('#message').dialog('open');
+		}
 	</script>
 </head>
 <body>
 	<div id="wrapper">
 {include file="left.tpl"}
+		<div id="message"><h2/></div>
 		<div id="main">

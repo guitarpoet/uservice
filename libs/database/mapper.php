@@ -182,6 +182,7 @@
 						$args []= $query->item_count;
 					}
 					debug($sql);
+					debug($args);
 					$stmt = $db->prepare($sql);
 					$stmt->bind_args($args);
 					$stmt->execute();

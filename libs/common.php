@@ -2,7 +2,9 @@
 	defined( 'uservice' ) or die( 'You should not see this.' );
 	require_once(dirname(__FILE__).'/event.php');
 
-	function get_param($name, $default) {
+	define('ITEM_COUNT', 15);
+
+	function get_param($name, $default=null) {
 		if(isset($_GET[$name])){
 			return $_GET[$name];
 		}

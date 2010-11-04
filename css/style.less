@@ -1,6 +1,12 @@
 @import 'reset.css';
 @import 'jquery.ui.css';
 
+@fz=11px;
+
+.ui-widget {
+	font-size: @fz !important;
+}
+
 .header {
 	.ui-widget-header;
        	.ui-corner-all;
@@ -42,6 +48,12 @@ table.datagrid {
 			padding: 2px 2px;
 			text-align:center;
 		}
+		th:first-child {
+			.ui-corner-tl;
+		}
+		th:last-child {
+			.ui-corner-tr;
+		}
 	}
 	tbody {
 		.active td {
@@ -61,17 +73,29 @@ table.datagrid {
 		}
 	}
 	tfoot {
-		.ui-corner-all;
 		tr{
-			background: white;
+			td {
+				.ui-corner-bottom;
+				background: white;
+				padding: 5px;
+			}
 		}
 	}
 }
 
+form {
+	.action {
+		margin-top: 20px;
+	}
+	dl {
+		margin: 5px;
+	}
+}
+
 body {
-	font-size: 10px;
+	font-size: @fz;
 	#users_result {
-		width: 700px;
+		padding: 10px 10px;
 		margin:auto;
 		#users_control {
 			.combobox {

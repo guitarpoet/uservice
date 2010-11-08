@@ -2,12 +2,15 @@
 	require_once(dirname(__FILE__).'/../libs/common.php');
 	require_once(dirname(__FILE__).'/../libs/user_ops.php');
 
-	class UsermanagerController {
+	class GroupmanagerController {
 		public function handle($smarty) {
 			$format = get_param('format', 'html');
 			if($format == 'json') {
 				$type = get_param('type');
 				switch($type) {
+				case 'members':
+					echo json_encode(list_group_members(get_param('gid'), get_param('page', 0), get_param('count', ITEM_COUNT)));
+					return;
 				case 'activate':
 					$ids = explode(',',get_param('ids'));
 					activate_users($ids);
@@ -28,24 +31,11 @@
 			}
 			else {
 				$mapper = Mapper::get_instance();
-				$condition = get_param('condition');
-				if(isset($condition)) {
-					switch($condition) {
-					case 'username':
-						$result = $mapper->exec('list_user_by_name', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-						break;
-					case 'email':
-						$result = $mapper->exec('list_user_by_email', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-						break;
-					}
-				}
-				else {
-					$result = $mapper->exec('list_all_users', array(), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-				}
+				$result = $mapper->exec('list_all_groups', array(), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
 				$smarty->assign('count', $result->total);
-				$smarty->assign('users', $result->results);
+				$smarty->assign('groups', $result->results);
 				$smarty->assign('page_count', ceil($result->total / ITEM_COUNT));
-				$smarty->display('users/usermanager.tpl');
+				$smarty->display('users/groupmanager.tpl');
 			}
 		}
 	}

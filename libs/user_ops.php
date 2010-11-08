@@ -181,4 +181,9 @@
 			$mapper->save_entity($update);
 		}
 	}
+
+	function list_group_members($gid, $page = 0, $items = ITEM_COUNT) {
+		$mapper = Mapper::get_instance();
+		return $mapper->exec('list_group_members', array($gid), $page, $items);
+	}
 ?>

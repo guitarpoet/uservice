@@ -157,7 +157,7 @@
 			return false;
 		}
 
-		public function exec($type, $args = array(), $page = 0, $item_count = 15) {
+		public function exec($type, $args = array(), $page = 0, $item_count = ITEM_COUNT) {
 			$query = new Query($type);
 			$query->args = $args;
 			$query->page = $page;
@@ -192,7 +192,14 @@
 					}
 					$stmt->close();
 
-					$stmt = $db->prepare($mapping['count_query']);
+					$sql = $mapping['count_query'];
+
+					if($query->page != -1) {
+						// Adding the pagination parameters
+						$sql = $sql.' limit ?,?';
+					}
+					$stmt = $db->prepare($sql);
+					$stmt->bind_args($args);
 					$stmt->execute();
 					$count = $stmt->fetch_assoc();
 					$count = $count['count'];

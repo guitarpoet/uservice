@@ -11,3 +11,21 @@ create table if not exists users (
 	salt char(6),
 	status tinyint(1)
 );
+
+create table if not exists groups (
+	id integer primary key auto_increment,
+	groupname varchar(64) not null unique,
+	description varchar(1024),
+	creation_time datetime,
+	last_modification_time datetime,
+	creator integer not null,
+	foreign key (creator) references users (id)
+);
+
+create table if not exists group_members (
+	uid integer,
+	gid integer,
+	primary key (uid, gid),
+	foreign key (uid) references users (id),
+	foreign key (gid) references groups (id)
+);

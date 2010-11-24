@@ -4,9 +4,12 @@ Read me of UService
 
 ====================
 
+::Author:: Jack
+::Date:: Wed Nov 24 15:38:22 CST 2010
 
 UService is a simple user management framework just like ucenter of discuz!
 
 It will provide the user and group management and security layer for the user management.
 
 It also provide a small mvc framework to handle this.
+

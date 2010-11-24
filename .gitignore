@@ -2,5 +2,6 @@
 templates_c
 cache
 templates/*.html
+templates/users/*.html
 docs/*.html
 *.swo

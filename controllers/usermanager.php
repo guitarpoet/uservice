@@ -3,9 +3,29 @@
 	require_once(dirname(__FILE__).'/../libs/user_ops.php');
 
 	class UsermanagerController {
+		public function get_result() {
+			$mapper = Mapper::get_instance();
+			$condition = get_param('condition');
+			if(isset($condition)) {
+				switch($condition) {
+				case 'username':
+					$result = $mapper->exec('list_user_by_name', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
+					break;
+				case 'email':
+					$result = $mapper->exec('list_user_by_email', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
+					break;
+				}
+			}
+			else {
+				$result = $mapper->exec('list_all_users', array(), get_param('page', 0), ITEM_COUNT);
+			}
+			return $result;
+		}
+
 		public function handle($smarty) {
 			$format = get_param('format', 'html');
 			if($format == 'json') {
+				header('Content-type: application/json');
 				$type = get_param('type');
 				switch($type) {
 				case 'activate':
@@ -23,25 +43,14 @@
 					$ids = explode(',',get_param('ids'));
 					delete_users($ids);
 					break;
+				case 'query':
+					echo json_encode(self::get_result());
+					return;
 				}
 				echo json_encode(array('message' => 'OK'));
 			}
 			else {
-				$mapper = Mapper::get_instance();
-				$condition = get_param('condition');
-				if(isset($condition)) {
-					switch($condition) {
-					case 'username':
-						$result = $mapper->exec('list_user_by_name', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-						break;
-					case 'email':
-						$result = $mapper->exec('list_user_by_email', array('%'.get_param('query').'%'), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-						break;
-					}
-				}
-				else {
-					$result = $mapper->exec('list_all_users', array(), get_param('page', 0) * ITEM_COUNT, ITEM_COUNT);
-				}
+				$result = self::get_result();
 				$smarty->assign('count', $result->total);
 				$smarty->assign('users', $result->results);
 				$smarty->assign('page_count', ceil($result->total / ITEM_COUNT));

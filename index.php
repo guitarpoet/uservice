@@ -30,6 +30,9 @@
 	$smarty->register->templateFunction('show', 'show_text');
 
 	$GLOBALS['engine'] = $smarty;
+	session_start();
+
+	$_SESSION['uid'] = 2;
 
 	EventDispatcher::get_instance()->register_handler('*', 'debug');
 

@@ -31,17 +31,16 @@
 						buttons: {
 							submit: function(){
 								$.post(root, {
-									operation: 'usermanager',
+									operation: 'groupmanager',
 									type: $('#edit_type').val(),
-									id: $('#user_id').val(),
-									username: $('#username').val(),
-									email: $('#email').val(),
-									status: $('#status').val(),
+									id: $('#group_id').val(),
+									groupname: $('#groupname').val(),
+									description: $('#description').val(),
 									format: 'json'
 								}, function(){
 									$('#edit_dialog').dialog('close');
-									showMessage("{show text='Users are updated'}","{show text='Success'}", true);
-								})
+									showMessage("{show text='Group are updated'}","{show text='Success'}", true);
+								});
 							}
 						}
 					});
@@ -55,42 +54,40 @@
 
 					$('#modify').click(function(){
 						if($('.datagrid tr.checked').length > 1) {
-							showMessage("{show text='More than one user selected!'}", "{show text='Error'}");
+							showMessage("{show text='More than one group selected!'}", "{show text='Error'}");
 							return;
 						}
 						if(checkIfNoGroupSelected())
 							return;
-						var user = $('.datagrid tr.checked td');
-						$('#username').val(user.eq(2).text());
-						$('#email').val(user.eq(3).text());
-						$('#user_id').val(user.eq(1).text());
-						$('#status').val(user.eq(9).text());
+						var group = $('.datagrid tr.checked td');
+						$('#group_id').val(group.eq(1).text());
+						$('#groupname').val(group.eq(2).text());
+						$('#description').val(group.eq(3).text());
 						$('#edit_type').val('update');
-						$('#edit_dialog').dialog('option', 'title', "{show text='Edit User - '}" + user.eq(2).text()).dialog('open');
+						$('#edit_dialog').dialog('option', 'title', "{show text='Edit Group - '}" + group.eq(2).text()).dialog('open');
 					});
-					function getUserIDs() {
-						var userIds = [];
+					function getGroupIDs() {
+						var groupIds = [];
 						$('.datagrid tr.checked').each(function(){
-							userIds.push($(this).children('td').eq(1).text().trim());
+							groupIds.push($(this).children('td').eq(1).text().trim());
 						});
-						return userIds;
+						return groupIds;
 					}
 
 					$('#add').click(function(){
-						if(checkIfNoGroupSelected())
-							return;
-						$('#edit_dialog').dialog('option', 'title', "{show text='Edit User - '}" + user.eq(2).text()).dialog('open');
+						$('#edit_type').val('insert');
+						$('#edit_dialog').dialog('option', 'title', "{show text='Create group'}").dialog('open');
 					});
 					$('#delete').click(function(){
 						if(checkIfNoGroupSelected())
 							return;
 						$.post(root, {
-							operation: 'usermanager',
+							operation: 'groupmanager',
 							type: 'delete',
 							format: 'json',
-							ids: getUserIDs().join(',')
+							ids: getGroupIDs().join(',')
 						}, function(){
-							showMessage("{show text='Users are deleted'}","{show text='Success'}", true);
+							showMessage("{show text='Groups are deleted'}","{show text='Success'}", true);
 							clearChecks();
 						});
 					});
@@ -140,8 +137,8 @@
 								<td>
 									<input type="checkbox" name="{$groups[group].id}" />
 								</td>
-								<td>{$groups[group].id}</td>
-								<td>{$groups[group].groupname}</td>
+								<td><a href='{get_link target="{$groups[group].id}" type="group"}'>{$groups[group].id}</a></td>
+								<td><a href='{get_link target="{$groups[group].id}" type="group"}'>{$groups[group].groupname}</a></td>
 								<td>{$groups[group].description}</td>
 								<td>{$groups[group].creation_time}</td>
 								<td>{$groups[group].last_modification_time}</td>
@@ -163,41 +160,6 @@
 						</tfoot>
 					</table>
 				</form>
-				<div id="user_table">
-					<div id="groups_control" class="toolbar">
-						<input type='button' id="add" class="button" value="{show text='Add'}"/>
-						<input type='button' id="delete" class="button" value="{show text='Delete'}"/>
-					</div>
-					<table class="datagrid" cellspadding='1'>
-						<thead>
-							<tr>
-								<th>
-									<input type="checkbox" id="check_all_user" />
-								</th>
-								<th>{show text='ID'}</th>
-								<th>{show text='Username'}</th>
-								<th>{show text='Email'}</th>
-								<th>{show text='Register Time'}</th>
-								<th>{show text='Register IP'}</th>
-								<th>{show text='Last Login IP'}</th>
-								<th>{show text='Last Login Time'}</th>
-								<th>{show text='Login Count'}</th>
-								<th>{show text='Status'}</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-						<tfoot>
-							<tr height='5'>
-								<td colspan='10'>
-									{show text='Goto Page'}
-									<select id="page" name="page">
-									</select>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
 			</div>
 			<div id="edit_dialog" title="{show text='Edit Group'}">
 				<form action="{$smarty.const.ROOT}/index.php" class="form container">
@@ -214,7 +176,7 @@
 							<label for="description">{show text='description'}:</label>
 						</dt>
 						<dd>
-							<input id="description" name="description" class="text_input" />
+							<textarea id="description" name="description" class="text_input" ></textarea>
 						</dd>
 					</dl>
 					<input type="hidden" id="edit_type" name="type"/>

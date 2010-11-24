@@ -182,8 +182,73 @@
 		}
 	}
 
+	function load_group($gid) {
+		$mapper = Mapper::get_instance();
+		user_op_event('load_group', sprintf('Load group with group id %i', $gid));
+		return $mapper->load_entity('groups', $gid);
+	}
+
 	function list_group_members($gid, $page = 0, $items = ITEM_COUNT) {
 		$mapper = Mapper::get_instance();
 		return $mapper->exec('list_group_members', array($gid), $page, $items);
+	}
+
+	function search_group_members($gid, $condition, $query, $page = 0, $items = ITEM_COUNT) {
+		$mapper = Mapper::get_instance();
+		user_op_event('search_group_members', sprintf('Search group members with group id %i and condition %s and query %s', $gid, $condition, $query));
+		switch($condition) {
+		case 'username':
+			return $mapper->exec('list_group_members_by_username', array($gid, '%'.$query.'%'), $page, $items);
+		case 'email':
+			return $mapper->exec('list_group_members_by_email', array($gid, '%'.$query.'%'), $page, $items);
+		}
+	}
+
+	function add_group_members($gid, $ids) {
+		$mapper = Mapper::get_instance();
+		$params = array();
+		user_op_event('add_group_members', sprintf('Add group members with group id %i and members %s', $gid, implode(',', $ids)));
+		foreach($ids as $uid) {
+			$params []= array($uid, $gid);
+		}
+		$mapper->batch_query('add_group_members', $params);
+	}
+
+	function remove_group_members($gid, $ids) {
+		$mapper = Mapper::get_instance();
+		user_op_event('remove_group_members', sprintf('Remove group members with group id %i and members %s', $gid, implode(',', $ids)));
+		$params = array();
+		foreach($ids as $uid) {
+			$params []= array($uid, $gid);
+		}
+		$mapper->batch_query('remove_group_members', $params);
+	}
+	function update_group($gid, $groupname, $description) {
+		$mapper = Mapper::get_instance();
+		user_op_event('update_group', sprintf('Update group with group id %i and groupname %s, description %s', $gid, $groupname, $description));
+		$mapper->save_entity('groups', array(
+			'id' => $gid,
+			'groupname' => $groupname,
+			'description' => $description,
+			'last_modification_time' => date('c')
+		));
+	}
+	function delete_groups($ids) {
+		$mapper = Mapper::get_instance();
+		user_op_event('remove_groups', sprintf('Remove groups %s', implode(',', $ids)));
+		foreach($ids as $id) {
+			$mapper->delete_entity('groups', $id);
+		}
+	}
+	function create_group($groupname, $description, $creator) {
+		$mapper = Mapper::get_instance();
+		user_op_event('update_group', sprintf('Create group with group creator %i and groupname %s, description %s', $creator, $groupname, $description));
+		return $mapper->save_entity('groups', array(
+			'groupname' => $groupname,
+			'description' => $description,
+			'creation_time' => date('c'),
+			'last_modification_time' => date('c'),
+			'creator' => $creator
+		));
 	}
 ?>

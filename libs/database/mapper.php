@@ -165,6 +165,24 @@
 			return self::query($query);
 		}
 
+		public function batch_query($type, $args) {
+			if(isset($type) && isset($GLOBALS['mapping_table'][$type])) {
+				$mapping = $GLOBALS['mapping_table'][$type];
+				if($mapping['type'] == 'batch') {
+					$db = get_db();
+					$stmt = $db->prepare($mapping['query']);
+					foreach($args as $params) {
+						debug($mapping['query']);
+						debug($params);
+						$stmt->bind_args($params);
+						$stmt->execute();
+					}
+					$stmt->close();
+					$db->close();
+				}
+			}
+		}
+
 		public function query($query) {
 			if(isset($query->type) && isset($GLOBALS['mapping_table'][$query->type])) {
 				$mapping = $GLOBALS['mapping_table'][$query->type];

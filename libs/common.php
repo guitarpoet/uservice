@@ -45,6 +45,8 @@
 			return ROOT.'/index.php?view='.$target['target'];
 		case 'oper':
 			return ROOT.'/index.php?operation='.$target['target'];
+		case 'group':
+			return ROOT.'/index.php?operation=groupmanager&gid='.$target['target'];
 		}
 	}
 

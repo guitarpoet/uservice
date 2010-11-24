@@ -27,7 +27,7 @@
 	float:right;
 }
 
-input.text_input {
+textarea.text_input, input.text_input {
        	.ui-corner-all;
 	padding: 5px 5px;
 	.ui-widget;
@@ -47,6 +47,7 @@ table.datagrid {
 			border:none;
 			padding: 2px 2px;
 			text-align:center;
+			cursor: move;
 		}
 		th:first-child {
 			.ui-corner-tl;
@@ -115,12 +116,15 @@ body {
 				margin-left: 34px;
 			}
 		}
-		#user_table {
-			margin-top:10px;
-		}
 		.datagrid {
 			margin-top: 10px;
 			width: 100%;
+		}
+	}
+
+	#choose_user_dialog {
+		#user_search {
+			margin-bottom: 5px;
 		}
 	}
 }
